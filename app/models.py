@@ -1,9 +1,5 @@
 from . import db
 from werkzeug.security import generate_password_hash
-from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import StringField, SelectField, TextAreaField
-from wtforms.validators import DataRequired, Email
 
 
 class Posts(db.Model):
@@ -60,10 +56,10 @@ class Users(db.Model):
     photo = db.Column(db.String(256))
     password = db.Column(db.String(256))
 
-    def __init__(self, first_name, last_name, gender, email, location, bio, joined_on, photo):
+    def __init__(self, username, first_name, last_name, email, location, bio, joined_on, photo, password):
+        self.username = username
         self.first_name = first_name
         self.last_name = last_name
-        self.gender = gender
         self.email = email
         self.location = location
         self.bio = bio

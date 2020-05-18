@@ -15,6 +15,7 @@ Vue.component('app-header', {
           <li class="nav-item ">
             <router-link class="nav-link" to="/api/upload">Upload Form </router-link>
           </li>
+
         </ul>
       </div>
     </nav>
@@ -63,8 +64,7 @@ const Upload = Vue.component('upload-form', {
             <label> Description: </label><br/>
             <textarea name="description" rows="5" cols="55">
             </textarea>
-        </div>
-        <div class="form-group">
+
             <label> Photo: </label>
             <input type="file" name="photo" placeholder="choose an image" />
         </div>
@@ -196,35 +196,36 @@ const Registration = Vue.component('Registration', {
         <form @submit.prevent="registration"  id="registrationForm" method="post" enctype="multipart/form-data">
             <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" class="w-100 form-control mb-3" placeholder="Your username" required >
+            <input type="text"  name="username" class="w-100 form-control mb-3" placeholder="Your username">
 
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" class="w-100 form-control mb-3"  placeholder="Password" required>
+            <input type="password"  name="password" class="w-100 form-control mb-3"  placeholder="Password">
 
             <label for="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName" class="w-100 form-control mb-3" placeholder="Enter your first name" required >
+            <input type="text"  name="firstname" class="w-100 form-control mb-3" placeholder="Enter your first name">
 
             <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" name="lastName" class="w-100 form-control mb-3" placeholder="Enter your last name" required >
+            <input type="text"  name="lastname" class="w-100 form-control mb-3" placeholder="Enter your last name">
 
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" class="w-100 form-control mb-3" placeholder="Enter your email " required>
+            <input type="email"  name="email" class="w-100 form-control mb-3" placeholder="Enter your email ">
 
             <label for="location">Location</label>
-            <input type="text" id="location" name="location" class="w-100 form-control mb-3" placeholder="Enter your location" >
+            <input type="text"  name="location" class="w-100 form-control mb-3" placeholder="Enter your location" >
 
             <label for="biography">Biography</label>
-            <textarea rows="5" cols="40" id="biography" name="biography" class="w-100 form-control mb-3" placeholder="Tell us about yourself">  </textarea>
+            <textarea rows="5" cols="40"  name="biography" class="w-100 form-control mb-3" placeholder="Tell us about yourself"></textarea>
 
             <label for="photo">Photo</label>
-            <input type="file" id="photo" name="photo" class=" mb-3" placeholder="PHOTO" >
+            <input type="file"  name="photo" class=" mb-3" placeholder="PHOTO">
 
-            <button name="submit" class="btn btn-block btn-success">Register</button>
+            <button name="submit" class="btn btn-block btn-success" >Registration</button>
             </div>
 
         </form>
     </div>
     `,
+
 
     methods: {
 
@@ -241,6 +242,7 @@ const Registration = Vue.component('Registration', {
                 },
                 credentials: 'same-origin'
         })
+
                 .then(function (response) {
                     return response.json();
         })
@@ -248,6 +250,7 @@ const Registration = Vue.component('Registration', {
             // display a success message
                     console.log(jsonResponse);
         })
+
             .catch(function (error) {
             console.log(error);
         });

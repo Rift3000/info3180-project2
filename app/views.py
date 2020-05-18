@@ -7,6 +7,7 @@ This file creates your application.
 
 import os
 from app import app, db
+import datetime
 from flask import render_template, request, redirect, url_for, flash, session, abort
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.utils import secure_filename
@@ -80,35 +81,46 @@ def login():
 def register():
     registerform = GramForm()
 
-    if request.method == 'POST' and registerform.validate_on_submit():
-        username = registerform.username.data
-        password = registerform.password.data
-        first_name = registerform.firstname.data
-        last_name = registerform.lastname.data
-        email = registerform.email.data
-        location = registerform.location.data
-        bio = registerform.bio.data
-        photo = registerform.photo.data
-        filename = secure_filename(photo.filename)
-        photo.save(os.path.join(
-            app.config['UPLOAD_FOLDER'], filename
-        ))
+    if request.method == 'POST':
+        if registerform.validate_on_submit():
+            username = registerform.username.data
+            password = registerform.password.data
+            first_name = registerform.firstname.data
+            last_name = registerform.lastname.data
+            email = registerform.email.data
+            location = registerform.location.data
+            bio = registerform.biography.data
+            photo = registerform.photo.data
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(
+                app.config['UPLOAD_FOLDER'], filename
+            ))
 
-        d = datetime.datetime.today()
-        joined_on = d.strftime("%d-%B-%Y")
+            d = datetime.datetime.today()
+            joined_on = d.strftime("%d-%B-%Y")
 
-        user = Users(username=username, password=password, first_name=first_name, last_name=last_name, email=email,
-                     location=location, bio=bio,
-                     joined_on=joined_on, photo=filename)
+            user = Users(username=username, password=password, first_name=first_name, last_name=last_name, email=email,
+                         location=location, bio=bio,
+                         joined_on=joined_on, photo=filename)
 
-        db.session.add(user)
-        db.session.commit()
+            db.session.add(user)
+            db.session.commit()
 
-        users = Users.query.all()
+            users = Users.query.all()
 
-        return 'success'
+            data = {
+                "message": "File Upload Successful",
+                "filename": filename,
+                "description": "Have a good day"
+            }
 
-    return 'try again'
+            return data
+
+        return {"errors": [{"error 1": "Closer"},
+                           {"error 2": "Not close enough"}]}
+
+    return {"errors": [{"error 1": "You must fill out the entire form"},
+                       {"error 2": "Please fill out the entire form"}]}
 
 
 # Here we define a function to collect form errors from Flask-WTF
