@@ -6,11 +6,12 @@ This file creates your application.
 """
 
 import os
-from app import app, db
+from app import app, db, login_manager
 import datetime
 from flask import render_template, request, redirect, url_for, flash, session, abort
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash
 
 from .forms import UploadForm, LoginForm, GramForm
 from .models import Users
@@ -27,13 +28,6 @@ from .models import Users
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
-    """
-    Because we use HTML5 history mode in vue-router we need to configure our
-    web server to redirect all routes to index.html. Hence the additional route
-    "/<path:path".
-
-    Also we will render the initial webpage and then let VueJS take control.
-    """
     return render_template('index.html')
 
 
@@ -63,18 +57,41 @@ def upload():
                        {"error 2": "You must fill out the description and select a photo"}]}
 
 
-@app.route('/api/login', methods=['POST'])
+@app.route("/api/auth/login", methods=["GET", "POST"])
 def login():
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME'] or request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid username or password'
-        else:
-            session['logged_in'] = True
+    form = LoginForm()
+    if request.method == "POST" and form.validate_on_submit():
+        # change this to actually validate the entire form submission
+        # and not just one field
+        if form.username.data:
+            # Get the username and password values from the form.
+            password = form.password.data
+            username = form.username.data
 
-            flash('You were logged in', 'success')
-            return 'success'
-    return error
+            user = Users.query.filter_by(username=username).first()
+
+            if user is not None and check_password_hash(user.password, password):
+
+                login_user(user)
+
+                return {"message": "success"}
+    return {"message": "Try again"}
+
+
+
+@app.route("/api/posts")
+@login_required
+def explore():
+
+    return {"message": "Welcome to the explore pages"}
+
+
+@app.route("/api/auth/logout")
+@login_required
+def logout():
+
+    logout_user()
+    return {"message": "The user has logged out"}
 
 
 @app.route("/api/users/register", methods=['POST'])
@@ -117,10 +134,15 @@ def register():
             return data
 
         return {"errors": [{"error 1": "Closer"},
-                           {"error 2": "Not close enough"}]}
+                           {"error 2": "Not close enough tho"}]}
 
     return {"errors": [{"error 1": "You must fill out the entire form"},
                        {"error 2": "Please fill out the entire form"}]}
+
+
+@login_manager.user_loader
+def load_user(id):
+    return Users.query.get(int(id))
 
 
 # Here we define a function to collect form errors from Flask-WTF

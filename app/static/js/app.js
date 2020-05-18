@@ -12,14 +12,18 @@ Vue.component('app-header', {
           <li class="nav-item active">
             <router-link class="nav-link" to="/">Home <span class="sr-only">(current)</span></router-link>
           </li>
-          <li class="nav-item ">
-            <router-link class="nav-link" to="/api/upload">Upload Form </router-link>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/api/posts">Explore </router-link>
           </li>
-
+          <li class="nav-item">
+            <router-link class="nav-link" to="/api/auth/logout">Logout </router-link>
+          </li>
         </ul>
       </div>
     </nav>
-    `
+    `,
+
+
 });
 
 Vue.component('app-footer', {
@@ -51,47 +55,19 @@ Vue.component('error', {
 });
 
 
+const Explore = Vue.component('explore', {
 
-const Upload = Vue.component('upload-form', {
     template: `
-
-    <div class="container">
-    /*<alert v-show="messages"></alert>
-    <error /*v-show="mess"> </error>*/
-    <h2>Upload your Photo</h2>
-    <form @submit.prevent="uploadPhoto"  id="uploadForm" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label> Description: </label><br/>
-            <textarea name="description" rows="5" cols="55">
-            </textarea>
-
-            <label> Photo: </label>
-            <input type="file" name="photo" placeholder="choose an image" />
-        </div>
-
-        <button name="submit" class="btn btn-primary">Upload</button>
-    </form>
-    </div>
+    <h2 class="alert alert-success">Below we have the explore tab!</h2>
     `,
-
-    data() {
-        return {
-            messages: false,
-            mess: true,
-        };
-    },
-
 
     methods: {
 
-        uploadPhoto: function() {
+        explore: function() {
         let self = this;
-        let uploadForm = document.getElementById('uploadForm');
-        let form_data = new FormData(uploadForm);
 
-        fetch("/api/upload", {
+        fetch("/api/posts", {
                 method: 'POST',
-                body: form_data,
                 headers: {
                     'X-CSRFToken': token
                 },
@@ -111,7 +87,46 @@ const Upload = Vue.component('upload-form', {
         }
     }
 
+
 });
+
+
+
+const Logout = Vue.component('logout', {
+
+    template: `
+    <h2 class="alert alert-success">You have successfully logged out!</h2>
+    `,
+
+    methods: {
+
+        logout: function() {
+        let self = this;
+
+        fetch("/api/auth/logout", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': token
+                },
+                credentials: 'same-origin'
+        })
+                .then(function (response) {
+                    return response.json();
+        })
+                .then(function (jsonResponse) {
+            // display a success message
+                    console.log(jsonResponse);
+        })
+            .catch(function (error) {
+            console.log(error);
+        });
+
+        }
+    }
+
+
+});
+
 
 const Home = Vue.component('home', {
    template: `
@@ -124,7 +139,7 @@ const Home = Vue.component('home', {
             <p class="card-text">Share photos of your favourite moments with friends, family and the world</p>
             <div class="row mt-5">
                <router-link :to="{ path: '/api/users/register'}" class="btn btn-primary btn-lg ml-3 mr-3" style="width:45%">Registration</router-link>
-               <router-link :to="{ path: '/api/login'}" class="btn btn-success btn-lg" style="width:45%">Login</router-link>
+               <router-link :to="{ path: '/api/auth/login'}" class="btn btn-success btn-lg" style="width:45%">Login</router-link>
             </div>
         </div>
         </div>
@@ -141,15 +156,15 @@ const Login = Vue.component('login', {
 
     <div class="container mt-5 bg-light w-50">
         <h2 class="py-4">Login</h2>
-        <form id="loginForm" method="post">
+        <form @submit.prevent="login" id="loginForm" method="post">
             <div class="form-group">
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" class="w-100 form-control mb-3" placeholder="Your username" required >
+            <input type="text" name="username" class="w-100 form-control mb-3" placeholder="Your username" required >
 
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" class="w-100 form-control mb-3"  placeholder="Password" required>
+            <input type="password" name="password" class="w-100 form-control mb-3"  placeholder="Password" required>
             </div>
-            <button class="btn btn-lg btn-primary w-50 my-3" type="submit">Sign in</button>
+            <button class="btn btn-lg btn-primary w-50 my-3" type="submit" name="submit" >Sign in</button>
         </form>
     </div>
     `,
@@ -162,7 +177,7 @@ const Login = Vue.component('login', {
         let loginForm = document.getElementById('loginForm');
         let form_data = new FormData(loginForm);
 
-        fetch("/api/login", {
+        fetch("/api/auth/login", {
                 method: 'POST',
                 body: form_data,
                 headers: {
@@ -279,10 +294,11 @@ const router = new VueRouter({
     routes: [
         {path: "/", component: Home},
         // Put other routes here
-        { path: '/api/upload', component: Upload },
+        { path: '/api/posts', component: Explore },
         // Path to the login page
-        { path: '/api/login', component: Login },
+        { path: '/api/auth/login', component: Login },
         { path: '/api/users/register', component: Registration },
+        { path: '/api/auth/logout', component: Logout },
         // This is a catch all route in case none of the above matches
         {path: "*", component: NotFound}
     ]

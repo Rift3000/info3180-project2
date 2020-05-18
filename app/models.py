@@ -67,6 +67,15 @@ class Users(db.Model):
         self.joined_on = joined_on
         self.password = generate_password_hash(password, method='pbkdf2:sha256')
 
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
     def get_id(self):
         try:
             return unicode(self.id)  # python 2 support

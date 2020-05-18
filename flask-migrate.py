@@ -16,33 +16,10 @@ if __name__ == '__main__':
 
 
 
+"""const Upload = Vue.component('upload-form', {
+    template: `
 
-"""photoform = UploadForm()
-
-    if request.method == 'POST':
-        if photoform.validate_on_submit():
-            photo = photoform.photo.data  # we could also use request.files['photo']
-            description = photoform.description.data
-
-            filename = secure_filename(photo.filename)
-            photo.save(os.path.join(
-                app.config['UPLOAD_FOLDER'], filename
-            ))
-
-            data = {
-                "message": "File Upload Successful",
-                "filename": filename,
-                "description": description
-            }
-
-            return data
-
-    return {"errors": [{"error 1": "You must fill out the description and select a photo"},
-                       {"error 2": "You must fill out the description and select a photo"}]}"""
-
-
-""""
-<div class="container">
+    <div class="container">
     /*<alert v-show="messages"></alert>
     <error /*v-show="mess"> </error>*/
     <h2>Upload your Photo</h2>
@@ -51,8 +28,7 @@ if __name__ == '__main__':
             <label> Description: </label><br/>
             <textarea name="description" rows="5" cols="55">
             </textarea>
-        </div>
-        <div class="form-group">
+
             <label> Photo: </label>
             <input type="file" name="photo" placeholder="choose an image" />
         </div>
@@ -60,11 +36,17 @@ if __name__ == '__main__':
         <button name="submit" class="btn btn-primary">Upload</button>
     </form>
     </div>
+    `,
 
-"""
+    data() {
+        return {
+            messages: false,
+            mess: true,
+        };
+    },
 
-"""
-methods: {
+
+    methods: {
 
         uploadPhoto: function() {
         let self = this;
@@ -93,4 +75,4 @@ methods: {
         }
     }
 
-"""
+});"""
